@@ -1,0 +1,14 @@
+{
+    "name": "mrxcol/asbd",
+    "description": "Un manejador sencillo de base de datos",
+    "type": "library",
+    "license": "GNU GPL V3",
+    "authors": [
+        {
+            "name": "Mr. X Colombia",
+            "email": "mrxcol@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
