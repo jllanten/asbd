@@ -2,7 +2,7 @@
     "name": "mrxcol/asbd",
     "description": "Un manejador sencillo de base de datos",
     "type": "library",
-    "license": "GNU GPL V3",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Mr. X Colombia",
