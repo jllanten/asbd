@@ -2,6 +2,7 @@
 namespace Asbd;
 
 use Asbd\Excepciones\ConfigInvalida;
+use Asbd\Excepciones\ErrorInterno;
 use Exception;
 use PDO;
 
@@ -145,24 +146,33 @@ class Asbd
      * @param array $parametros (Opcional default vacio) Los parametros del query
      * @param bool $uno (opcional default false) Indica si espera un solo resultado o varios (un array)
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
 	public function query(string $query, array $parametros = [], $uno = false) : array
     {
         $conexion = $this->getConexion();
 
-        $sth = $conexion->prepare($query);
-        if ($sth === false) {
-            $error = $conexion->errorInfo();
-            throw new \Exception(sprintf('Error BD (%d) : %s',  $error[1], $error[2]));
-        } else {
-            $sth->execute($parametros);
-            $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+        $result = null;
+        $sth = '';
+        try {
+            $sth = $conexion->prepare($query);
+            if ($sth === false) {
+                $error = $conexion->errorInfo();
+                throw new Exception(sprintf('Error BD (%d) : %s', $error[1], $error[2]));
+            } else {
+                $sth->execute($parametros);
+                $result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
-            // Este caso especial es para que cuando el query devuelve un solo resultado, lo tire de una en el primer query.
-            if (($uno === true) && (empty($result) === false) && (count($result) === 1)) {
-                $result = $result[0];
+                // Este caso especial es para que cuando el query devuelve un solo resultado, lo tire de una en el primer query.
+                if (($uno === true) && (empty($result) === false) && (count($result) === 1)) {
+                    $result = $result[0];
+                }
             }
+        } catch (Exception $e) {
+            $errorCode = ($sth instanceof Exception) ? $sth->errorCode() : $e->getCode();
+            $errorInfo = ($sth instanceof Exception) ? $sth->errorInfo() : $e->getMessage();
+
+            throw new ErrorInterno(sprintf('($d): %s', $errorCode, $errorInfo));
         }
 
 		return $result;

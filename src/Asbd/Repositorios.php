@@ -23,9 +23,14 @@ class Repositorios
     /** @var string Indica el modo de operacion (single | multi) */
     public static $modoOperacion = '';
 
+    /** @var string */
+    public static $rutaInicial;
+
     /**
      * Graba la configuracion de la base de datos
      * @param array $config
+     * @throws ModoInvalido
+     * @throws NoHayModo
      */
     public static function setConfig(array $config)
     {
@@ -45,7 +50,17 @@ class Repositorios
 
         self::$config = $config;
 
+        // La ubicacion de donde se llama el config sera establecida como la raiz de donde estan los modelos
+        // Esta informacion tambien se puede setear/cambiar por setRutaBase()
+        $infoRuta = debug_backtrace();
+        self::$rutaInicial = dirname($infoRuta[0]['file']);
+
 	    self::$modoOperacion = $modoOperacion;
+    }
+
+    public function setRutaBase(string $raiz)
+    {
+        self::$rutaInicial = $raiz;
     }
 
     /**
@@ -98,6 +113,11 @@ class Repositorios
             // De lo contrario lo utilizamos tal cual
             $fullEntidad = self::$config['namespace'] . '\\' . $entidad;
         }
+
+        // Los modelos deben existir en raiz + nombre_clase respetando la estructura del namespace
+        // ej: si raiz = /var/coco y piden la clase Modelos/Prueba la clase debe existir en /var/coco/Modelos/Prueba.php
+        $ruta = str_replace("\\", DIRECTORY_SEPARATOR, $fullEntidad);
+        include_once self::$rutaInicial . DIRECTORY_SEPARATOR . $ruta . '.php';
 
         /** @var IEntidad $entidad */
         $entidad = new $fullEntidad();
