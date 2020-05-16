@@ -5,24 +5,23 @@ use Asbd\Repositorios;
 use Modelos\Prueba;
 
 $config = [
-    'usuario' => 'suma',
-    'clave' => 'SumaDesarrollo',
+    'usuario' => 'username',
+    'clave' => 'password',
     'host' => 'localhost',
-    'basedatos' => 'suma',
+    'basedatos' => 'mydb',
     'modo' => 'single',
-    'namespace' => 'Modelos'
+    'namespace' => 'models'
 ];
 
 
 Repositorios::setConfig($config);
 
 /** @var Prueba $prueba */
-//$prueba =  Repositorios::get(Prueba::class);
-$prueba =  Repositorios::get('Prueba');
+$prueba =  Repositorios::get(Prueba::class);
 
-$a = $prueba->getById(1);
+$data = $prueba->getById(1);
 
-print_r($a);
+print_r($data);
 
 
 
