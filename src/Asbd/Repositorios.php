@@ -32,10 +32,10 @@ class Repositorios
      * @throws ModoInvalido
      * @throws NoHayModo
      */
-    public static function setConfig(array $config)
+    public static function setConfig(array $config, string $rutaInicial = '')
     {
-	    if (empty($config['modo'])) {
-	        throw new NoHayModo();
+        if (empty($config['modo'])) {
+            throw new NoHayModo();
         }
         $modoOperacion = $config['modo'];
 
@@ -50,15 +50,18 @@ class Repositorios
 
         self::$config = $config;
 
-        // La ubicacion de donde se llama el config sera establecida como la raiz de donde estan los modelos
         // Esta informacion tambien se puede setear/cambiar por setRutaBase()
-        $infoRuta = debug_backtrace();
-        self::$rutaInicial = dirname($infoRuta[0]['file']);
+        if (empty($rutaInicial)) {
+            // La ubicacion de donde se llama el config sera establecida como la raiz de donde estan los modelos
+            $infoRuta = debug_backtrace();
+            $rutaInicial = dirname($infoRuta[0]['file']);
+        }
 
-	    self::$modoOperacion = $modoOperacion;
+        self::$rutaInicial = $rutaInicial;
+        self::$modoOperacion = $modoOperacion;
     }
 
-    public function setRutaBase(string $raiz)
+    public static function setRutaModelos(string $raiz)
     {
         self::$rutaInicial = $raiz;
     }
